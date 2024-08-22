@@ -8,6 +8,10 @@ import authRouter from "./routes/auth.route.js";
 import postRouter from "./routes/post.route.js";
 import commentRouter from "./routes/comment.route.js";
 
+// build and deploy
+
+import path from "path";
+
 dotenv.config();
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -17,6 +21,9 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+  // build and deploy
+  const __dirname = path.resolve();
 
 const app = express();
 app.use(express.json());
@@ -31,6 +38,13 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/comment", commentRouter);
+
+// build and deploy
+app.use(express.static(path.join(__dirname, "/client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+}
+);
 
 // middleware to handle errors
 
